@@ -1,31 +1,77 @@
 import { Request, Response } from "express";
+import { db } from "../../db/index";
+import { productsTable } from "../../db/schema";
+import { eq } from "drizzle-orm";
 
-export function createProduct(req: Request, res: Response) {
-  const newProduct = req.body;
-  console.log(newProduct);
-  res.send(`New product created: ${JSON.stringify(newProduct)}`);
+export async function createProduct(req: Request, res: Response) {
+  try {
+    const product = await db.insert(productsTable).values(req.body).returning();
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
 
-export function getProductById(req: Request, res: Response) {
-  const productId = req.params.id;
-  res.send(`single product details for product ID: ${productId}`);
+export async function getProductById(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const [product] = await db
+      .select()
+      .from(productsTable)
+      .where(eq(productsTable.id, Number(id)));
+
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+    } else {
+      res.status(200).json(product);
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
 
-export function getProducts(req: Request, res: Response) {
-  res.send("the list of products");
+export async function getProducts(req: Request, res: Response) {
+  try {
+    const products = await db.select().from(productsTable);
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
 
-export function updateProduct(req: Request, res: Response) {
-  const productId = req.params.id;
-  const updatedProduct = req.body;
-  res.send(
-    `Product with ID ${productId} has been updated: ${JSON.stringify(
-      updatedProduct,
-    )}`,
-  );
+export async function updateProduct(req: Request, res: Response) {
+  try {
+    const productId = req.params.id;
+    const updatedProduct = req.body;
+    const [product] = await db
+      .update(productsTable)
+      .set(updatedProduct)
+      .where(eq(productsTable.id, Number(productId)))
+      .returning();
+
+    if (!product) {
+      res.status(404).json({ message: "Product not found" });
+    } else {
+      res.status(200).json(product);
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
 
-export function deleteProduct(req: Request, res: Response) {
-  const productId = req.params.id;
-  res.send(`Product with ID ${productId} has been deleted`);
+export async function deleteProduct(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const [deletedProduct] = await db
+      .delete(productsTable)
+      .where(eq(productsTable.id, Number(id)))
+      .returning();
+    if (!deletedProduct) {
+      res.status(404).json({ message: "Product not found" });
+    } else {
+      res.status(204).send();
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
 }
