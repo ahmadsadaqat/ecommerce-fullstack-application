@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 export function createProduct(req: Request, res: Response) {
   const newProduct = req.body;
+  console.log(newProduct);
   res.send(`New product created: ${JSON.stringify(newProduct)}`);
 }
 
