@@ -6,6 +6,8 @@ import {
   getProducts,
   updateProduct,
 } from "./productController";
+import { validateData } from "../../middleware/validationMiddleware";
+import { createProductSchema, updateProductSchema } from "../../db/schema";
 
 const router = Router();
 
@@ -13,9 +15,9 @@ router.get("/", getProducts);
 
 router.get("/:id", getProductById);
 
-router.post("/", createProduct);
+router.post("/", validateData(createProductSchema), createProduct);
 
-router.put("/:id", updateProduct);
+router.put("/:id", validateData(updateProductSchema), updateProduct);
 
 router.delete("/:id", deleteProduct);
 
