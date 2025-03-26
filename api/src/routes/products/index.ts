@@ -11,17 +11,29 @@ import {
   createProductSchema,
   updateProductSchema,
 } from "../../db/productsSchema";
+import { verifySeller, verifyToken } from "../../middleware/authMiddleware";
 
 const router = Router();
 
+// Public routes - no authentication required
 router.get("/", getProducts);
-
 router.get("/:id", getProductById);
 
-router.post("/", validateData(createProductSchema), createProduct);
-
-router.put("/:id", validateData(updateProductSchema), updateProduct);
-
-router.delete("/:id", deleteProduct);
+// Protected routes - authentication required
+router.post(
+  "/",
+  verifyToken,
+  verifySeller,
+  validateData(createProductSchema),
+  createProduct,
+);
+router.put(
+  "/:id",
+  verifyToken,
+  verifySeller,
+  validateData(updateProductSchema),
+  updateProduct,
+);
+router.delete("/:id", verifyToken, verifySeller, deleteProduct);
 
 export default router;
