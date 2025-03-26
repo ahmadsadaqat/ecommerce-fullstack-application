@@ -1,19 +1,31 @@
-import { Router } from "express";
+import express from "express";
 import {
   createProduct,
   deleteProduct,
   getProductById,
   getProducts,
   updateProduct,
-} from "./productController";
-import { validateData } from "../../middleware/validationMiddleware";
+} from "./productController.js";
+import { validateData } from "../../middleware/validationMiddleware.js";
 import {
   createProductSchema,
   updateProductSchema,
-} from "../../db/productsSchema";
-import { verifySeller, verifyToken } from "../../middleware/authMiddleware";
+} from "../../db/productsSchema.js";
+import { verifySeller, verifyToken } from "../../middleware/authMiddleware.js";
 
-const router = Router();
+const router = express.Router();
+
+router.get("/", async (req, res) => {
+  try {
+    res.json({ message: "Products route working!" });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "An unknown error occurred" });
+    }
+  }
+});
 
 // Public routes - no authentication required
 router.get("/", getProducts);

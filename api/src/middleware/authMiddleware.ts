@@ -15,8 +15,11 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
       ? authHeader.substring(7) // Remove 'Bearer ' prefix
       : authHeader;
 
+    // Use environment variable instead of hardcoded secret
+    const jwtSecret = process.env.JWT_SECRET || "your-secret";
+
     // decode jwt token data
-    const decoded = jwt.verify(token, "your-secret");
+    const decoded = jwt.verify(token, jwtSecret);
     if (typeof decoded !== "object" || !decoded?.userId) {
       res.status(401).json({ error: "Access denied" });
       return;

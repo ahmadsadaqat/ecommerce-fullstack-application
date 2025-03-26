@@ -1,19 +1,20 @@
 import { Router } from "express";
-import { validateData } from "../../middleware/validationMiddleware";
+import { validateData } from "../../middleware/validationMiddleware.js";
 import {
   createUserSchema,
   loginSchema,
   usersTable,
-} from "../../db/usersSchema";
+} from "../../db/usersSchema.js";
 import bcrypt from "bcryptjs";
-import { db } from "../../db";
+import { db } from "../../db/index.js";
 import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 
 const router = Router();
 
 const generateUserToken = (user: any) => {
-  return jwt.sign({ userId: user.id, role: user.role }, "your-secret", {
+  const jwtSecret = process.env.JWT_SECRET || "your-secret";
+  return jwt.sign({ userId: user.id, role: user.role }, jwtSecret, {
     expiresIn: "30d",
   });
 };
