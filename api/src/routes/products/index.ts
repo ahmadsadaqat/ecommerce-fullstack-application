@@ -7,7 +7,10 @@ import {
   updateProduct,
 } from "./productController";
 import { validateData } from "../../middleware/validationMiddleware";
-import { createProductSchema, updateProductSchema } from "../../db/schema";
+import {
+  createProductSchema,
+  updateProductSchema,
+} from "../../db/productsSchema";
 
 const router = Router();
 
