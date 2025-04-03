@@ -15,17 +15,17 @@ import { verifySeller, verifyToken } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
-  try {
-    res.json({ message: "Products route working!" });
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "An unknown error occurred" });
-    }
-  }
-});
+// router.get("/", async (req, res) => {
+//   try {
+//     res.json({ message: "Products route working!" });
+//   } catch (error) {
+//     if (error instanceof Error) {
+//       res.status(500).json({ error: error.message });
+//     } else {
+//       res.status(500).json({ error: "An unknown error occurred" });
+//     }
+//   }
+// });
 
 // Public routes - no authentication required
 router.get("/", getProducts);
